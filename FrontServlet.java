@@ -10,15 +10,17 @@ public class FrontServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         response.setContentType("text/html;charset=UTF-8");
-            
+        PrintWriter out = response.getWriter();
+
+        String url = request.getServletPath();
+        out.println(url);
     }
 
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-            processRequest(request, response);
-            
+        processRequest(request, response);
                 
     }
 
