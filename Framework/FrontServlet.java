@@ -58,7 +58,7 @@ public class FrontServlet extends HttpServlet {
 
         Utils utils = new Utils();
 
-        //out.println("url : " + utils.getUrl(request)+"<br>");
+        out.println("url : " + utils.getUrl(request)+"<br>");
 
         for (Map.Entry<String,Mapping> infoEntry : MappingUrls.entrySet()) {
             out.println(infoEntry.getKey()+ " ,dans la class : " + infoEntry.getValue().getClassName() + " ,method : " + infoEntry.getValue().getMethod() +"\n");
