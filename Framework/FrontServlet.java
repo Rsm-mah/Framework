@@ -60,9 +60,9 @@ public class FrontServlet extends HttpServlet {
             Utils utils = new Utils();
             Mapping mapping = MappingUrls.get(utils.getUrl(request));
 
-            // if (mapping == null) {
-            //     throw new Exception("Tsisy");
-            // }
+            if (mapping == null) {
+                throw new Exception("Tsisy");
+            }
 
             //out.println("url : " + utils.getUrl(request)+"<br>");
 
@@ -70,13 +70,14 @@ public class FrontServlet extends HttpServlet {
             //     out.println(infoEntry.getKey()+ " ,dans la class : " + infoEntry.getValue().getClassName() + " ,method : " + infoEntry.getValue().getMethod() +"\n");
             // }
 
-            // Class cls = Class.forName(mapping.getClassName());
-            // Object object = cls.getDeclaredConstructor().newInstance();
-            // ModelView modelview = (ModelView) object.getClass().getMethod(mapping.getMethod()).invoke(object);
-            // out.println(modelview.getUrl());
+            Class cls = Class.forName(mapping.getClassName());
+            Object object = cls.getDeclaredConstructor().newInstance();
+            ModelView modelview = (ModelView) object.getClass().getMethod(mapping.getMethod()).invoke(object);
+            out.println(modelview.getUrl());
 
-            // RequestDispatcher dispatcher = request.getRequestDispatcher(modelview.getUrl());
-            // dispatcher.forward(request,response);
+            RequestDispatcher dispatcher = request.getRequestDispatcher(modelview.getUrl());
+            dispatcher.forward(request,response);
+
         } catch (Exception e) {
             e.printStackTrace(out);
             // TODO: handle exception
