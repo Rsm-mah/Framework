@@ -5,11 +5,11 @@ import modelview.ModelView;
 
 
 public class Emp {
-    // @Url_annotation(url = "/getAll")
-    // public ModelView getAll(){
-    //     ModelView modelview = new ModelView();
-    //     modelview.setUrl("Emp.jsp");
+    @Url_annotation(url = "/getAll")
+    public ModelView getAll(){
+        ModelView modelview = new ModelView();
+        modelview.setUrl("Emp.jsp");
 
-    //     return modelview;
-    // }
+        return modelview;
+    }
 }
