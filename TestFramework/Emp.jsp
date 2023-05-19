@@ -1,3 +1,8 @@
+<%@page import="model.Emp"%>
+<%@page import="java.util.ArrayList"%>
+<%
+    ArrayList<Emp> listEmp= (ArrayList<Emp>)request.getAttribute("name");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +12,10 @@
     <title></title>
 </head>
 <body>
-    <p>Mety ilay izy</p>
+    <%
+        for (int i = 0; i < listEmp.size(); i++) { %>
+            <p><%out.println(listEmp.get(i).getNom() + " " + listEmp.get(i).getNom());%></p>
+        <% }
+    %>
 </body>
 </html>

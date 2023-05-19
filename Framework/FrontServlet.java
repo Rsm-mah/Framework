@@ -71,9 +71,15 @@ public class FrontServlet extends HttpServlet {
             // }
 
             Class cls = Class.forName(mapping.getClassName());
-            Object object = cls.getDeclaredConstructor().newInstance();
+            Object object = cls.getConstructor().newInstance();
             ModelView modelview = (ModelView) object.getClass().getMethod(mapping.getMethod()).invoke(object);
-            out.println(modelview.getUrl());
+
+            HashMap<String,Object> data = modelview.getDonnee();
+
+            for (Map.Entry infoEntry : data.entrySet()) {
+                request.setAttribute((String)infoEntry.getKey(),infoEntry.getValue());
+                System.out.println( infoEntry.getValue().getClass());
+            }
 
             RequestDispatcher dispatcher = request.getRequestDispatcher(modelview.getUrl());
             dispatcher.forward(request,response);
