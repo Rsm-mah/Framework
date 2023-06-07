@@ -2,6 +2,8 @@ package etu1877.framework;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.beans.PropertyEditorSupport;
+import java.beans.PropertyEditorManager;
 import java.io.File;
 import javax.servlet.http.*;
 
@@ -26,5 +28,11 @@ public class Utils {
             }
         }
         return classes;
+    }
+
+    public static <T> T conversion(String value, Class<T> type){
+        PropertyEditorSupport editor = (PropertyEditorSupport) PropertyEditorManager.findEditor(type);
+        editor.setAsText(value);
+        return (T) editor.getValue();
     }
 }
