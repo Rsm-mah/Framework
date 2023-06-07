@@ -1,6 +1,7 @@
 package etu1877.framework.servlet;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
@@ -72,7 +73,24 @@ public class FrontServlet extends HttpServlet {
 
             Class cls = Class.forName(mapping.getClassName());
             Object object = cls.getConstructor().newInstance();
-            ModelView modelview = (ModelView) object.getClass().getMethod(mapping.getMethod()).invoke(object);
+            ModelView modelview = new ModelView();
+            
+            //SPRINT 7
+            Field[] attribut = cls.getDeclaredFields();
+            for (int i = 0; i < attribut.length; i++) {
+                if (request.getParameter(attribut[i].getName())!=null) {
+                    Field f = cls.getDeclaredField(attribut[i].getName());
+                    f.setAccessible(true);
+                    String value = request.getParameter(attribut[i].getName());
+                    f.set(object, utils.conversion(value,f.getType()));
+                }
+            }
+            Method[] met = cls.getDeclaredMethods();
+            for (int i = 0; i < met.length; i++) {
+                if (met[i].getName().equals(mapping.getMethod())) {
+                    modelview = (ModelView)met[i].invoke(object);
+                }
+            }
 
             HashMap<String,Object> data = modelview.getDonnee();
 
