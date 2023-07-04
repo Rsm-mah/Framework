@@ -1,5 +1,6 @@
 <%@page language="java" contentType="text/html"%>
 <%@ page import="model.*"%>
+<%@ page import="java.util.ArrayList"%>
 <% Emp emp = (Emp)request.getAttribute("emp"); %>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +11,7 @@
     <title>AffichageEmp</title>
 </head>
 <body>
-    <p>Nom : <%out.print(emp.getNom());%></p>
-    <p>Prenom : <%out.print(emp.getPrenom());%></p>
+    <p>Nom : <%= emp.getNom() %></p>
+    <p>Prenom : <%= emp.getPrenom() %></p>
 </body>
 </html>

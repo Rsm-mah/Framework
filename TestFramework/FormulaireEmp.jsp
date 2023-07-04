@@ -7,7 +7,7 @@
     <title>Formulaire</title>
 </head>
 <body>
-    <form action="AffichageEmp" method="post">
+    <form action="AffichageEmp2" method="post">
         <p>Nom : <input type="text" name="nom"></p>
         <p>Prenom : <input type="text" name="prenom"></p>
         <input type="submit" value="Valider">
