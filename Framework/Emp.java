@@ -40,6 +40,20 @@ public class Emp {
         return modelview;
     }
 
+    @Url_annotation(url = "/AffichageEmp2")
+    public ModelView AffichageEmp2(String nom, String prenom) {
+        ModelView modelView = new ModelView();
+
+        Emp emp = new Emp();
+        emp.setNom(nom);
+        emp.setPrenom(prenom);
+
+        modelView.addItem("emp", emp);
+        modelView.setUrl("AffichageEmp.jsp");
+
+        return modelView;
+    }
+
     public String getNom() {
         return nom;
     }

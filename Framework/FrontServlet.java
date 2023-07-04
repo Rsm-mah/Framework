@@ -57,58 +57,91 @@ public class FrontServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         try {
             response.setContentType("text/html;charset=UTF-8");
-
+    
             Utils utils = new Utils();
             Mapping mapping = MappingUrls.get(utils.getUrl(request));
-
+    
             if (mapping == null) {
                 throw new Exception("Tsisy");
             }
-
-            //out.println("url : " + utils.getUrl(request)+"<br>");
-
-            // for (Map.Entry<String,Mapping> infoEntry : MappingUrls.entrySet()) {
-            //     out.println(infoEntry.getKey()+ " ,dans la class : " + infoEntry.getValue().getClassName() + " ,method : " + infoEntry.getValue().getMethod() +"\n");
-            // }
-
-            Class cls = Class.forName(mapping.getClassName());
+    
+            // Récupère la classe correspondante au mapping
+            Class<?> cls = Class.forName(mapping.getClassName());
+    
+            // Instancie la classe
             Object object = cls.getConstructor().newInstance();
+    
+            // Crée un ModelView et récupère les données
             ModelView modelview = new ModelView();
-            
-            //SPRINT 7
+            HashMap<String, Object> data = modelview.getDonnee();
+    
+            // Récupère les attributs de la classe
             Field[] attribut = cls.getDeclaredFields();
             for (int i = 0; i < attribut.length; i++) {
-                if (request.getParameter(attribut[i].getName())!=null) {
+    
+                // Vérifie si un paramètre correspondant à l'attribut est présent dans la requête
+                if (request.getParameter(attribut[i].getName()) != null) {
                     Field f = cls.getDeclaredField(attribut[i].getName());
                     f.setAccessible(true);
+    
+                    // Récupère la valeur du paramètre de la requête
                     String value = request.getParameter(attribut[i].getName());
-                    f.set(object, utils.conversion(value,f.getType()));
+    
+                    // Effectue une conversion de la valeur et l'assigne à l'attribut
+                    f.set(object, utils.conversion(value, f.getType()));
                 }
             }
+    
+            //SPRINT 8
+            // Récupère les méthodes de la classe
             Method[] met = cls.getDeclaredMethods();
             for (int i = 0; i < met.length; i++) {
+    
+                // Vérifie si une méthode correspondante au mapping est trouvée
                 if (met[i].getName().equals(mapping.getMethod())) {
-                    modelview = (ModelView)met[i].invoke(object);
+    
+                    if (met[i].getParameterCount() > 0) {
+                        Class<?>[] parametersTypes = met[i].getParameterTypes();
+    
+                        Object[] arguments = new Object[parametersTypes.length];
+    
+                        // Parcourt les paramètres
+                        for (int j = 0; j < parametersTypes.length; j++) {
+    
+                            // Vérifie si le paramètre est de type String
+                            if (parametersTypes[j].equals(String.class)) {
+                                // Obtient le nom du paramètre
+                                String paramName = met[i].getParameters()[j].getName();
+    
+                                // Obtient la valeur du paramètre depuis la requête
+                                String paramValue = request.getParameter(paramName);
+    
+                                // Ajoute la valeur du paramètre à l'array d'arguments
+                                arguments[j] = paramValue;
+                            }
+                        }
+
+                        // Appelle la méthode sur l'objet
+                        modelview = (ModelView) met[i].invoke(object, arguments);
+                    }
                 }
             }
-
-            HashMap<String,Object> data = modelview.getDonnee();
-
-            for (Map.Entry infoEntry : data.entrySet()) {
-                request.setAttribute((String)infoEntry.getKey(),infoEntry.getValue());
-                System.out.println( infoEntry.getValue().getClass());
+    
+            // Ajoute les données à la requête
+            for (Map.Entry<String, Object> infoEntry : modelview.getDonnee().entrySet()) {
+                request.setAttribute(infoEntry.getKey(), infoEntry.getValue());
             }
-
+    
+            // Transfère la requête au dispatcher pour afficher la vue correspondante
             RequestDispatcher dispatcher = request.getRequestDispatcher(modelview.getUrl());
-            dispatcher.forward(request,response);
-
+            dispatcher.forward(request, response);
+    
         } catch (Exception e) {
             e.printStackTrace(out);
             // TODO: handle exception
         }
-
-        
     }
+
 
     
     @Override
