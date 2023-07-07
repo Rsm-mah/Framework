@@ -21,6 +21,7 @@ import model.FileUpload;
 public class FrontServlet extends HttpServlet {
 
     HashMap<String,Mapping>  MappingUrls;
+    HashMap<String,Object>  MappingSingleton = new HashMap<String, Object>();
 
     @Override
     public void init() throws ServletException {
@@ -43,6 +44,14 @@ public class FrontServlet extends HttpServlet {
 
                         MappingUrls.put(m.getAnnotation(Url_annotation.class).url(), mapping);
 
+                    }
+                    //SPRINT 10
+                    else if (c.isAnnotationPresent(Scope.class)) {
+                        mapping = new Mapping();
+                        mapping.setClassName(c.getName());
+                        mapping.setMethod("Scope"); 
+
+                        MappingUrls.put(c.getAnnotation(Scope.class).type(), mapping); 
                     }
                 }
             }
@@ -69,14 +78,38 @@ public class FrontServlet extends HttpServlet {
     
             // Récupère la classe correspondante au mapping
             Class<?> cls = Class.forName(mapping.getClassName());
+
+            //SPRINT 10
+            boolean singleton = false;
+            if (cls.isAnnotationPresent(Scope.class)) {
+                if (cls.getAnnotation(Scope.class).type().equals("singleton")) {
+                    singleton = true;
+                    System.out.println(cls.getName() + " est de type singleton");
+                }
+            }
+
+            // Instancie la classe (en tant que singleton si applicable)
+            Object object;
+            if (singleton) {
+                // Vérifie si l'instance singleton existe déjà
+                if (MappingSingleton.containsKey(cls)) {
+                    object = MappingSingleton.get(cls);
+                } else {
+                    object = cls.getConstructor().newInstance();
+                    MappingSingleton.put(cls.getName(), object);
+                }
+            } else {
+                object = cls.getConstructor().newInstance();
+            }
     
             // Instancie la classe
-            Object object = cls.getConstructor().newInstance();
+            //Object object = cls.getConstructor().newInstance();
     
-            // Crée un ModelView et récupère les données
             ModelView modelview = new ModelView();
-            HashMap<String, Object> data = modelview.getDonnee();
+            //HashMap<String, Object> data = modelview.getDonnee();
     
+
+            //SPRINT 7
             // Récupère les attributs de la classe
             Field[] attribut = cls.getDeclaredFields();
             for (int i = 0; i < attribut.length; i++) {
