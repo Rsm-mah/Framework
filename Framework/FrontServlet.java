@@ -8,14 +8,16 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.*;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.*;
 
 import etu1877.framework.Mapping;
 import etu1877.framework.Url_annotation;
 import etu1877.framework.Utils;
 import modelview.ModelView;
+import model.FileUpload;
 
-
+@MultipartConfig
 public class FrontServlet extends HttpServlet {
 
     HashMap<String,Mapping>  MappingUrls;
@@ -123,9 +125,32 @@ public class FrontServlet extends HttpServlet {
 
                         // Appelle la méthode sur l'objet
                         modelview = (ModelView) met[i].invoke(object, arguments);
+                    } 
+                    else {
+                        // Appelle la méthode sans arguments
+                        modelview = (ModelView) met[i].invoke(object);
+                    }
+                }                
+
+            }
+
+            //SPRINT 9
+            String contentType = request.getContentType();
+            if (contentType != null && contentType.startsWith("multipart/form-data")) {
+                for (Part p : request.getParts()) {
+                    try {
+                        String name_fichier = utils.getFileName(p);
+                        byte[] bytes = utils.getFileBytes(p);   
+
+                        FileUpload fileupload = new FileUpload(name_fichier,null,bytes);
+                        modelview.addItem("fichier",fileupload);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
+                
             }
+            
     
             // Ajoute les données à la requête
             for (Map.Entry<String, Object> infoEntry : modelview.getDonnee().entrySet()) {
