@@ -1,10 +1,12 @@
 package model;
 
 import etu1877.framework.Url_annotation;
+import etu1877.framework.Scope;
 import modelview.ModelView;
 
 import java.util.ArrayList;
 
+@Scope(type = "singleton")
 public class Emp {
     String nom;
     String prenom;
@@ -50,6 +52,13 @@ public class Emp {
 
         modelView.addItem("emp", emp);
         modelView.setUrl("AffichageEmp.jsp");
+
+        return modelView;
+    }
+
+    @Url_annotation(url = "/TestSingleton")
+    public ModelView Singleton() {
+        ModelView modelView = new ModelView();
 
         return modelView;
     }
